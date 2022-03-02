@@ -1,27 +1,27 @@
-<script setup lang="ts">
-import { ref, reactive, watch } from "vue";
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+import Task from "@/models/Task";
+import { useStore } from "@/store";
+import { MutationType } from "@/store/mutations";
 
-let getTaco = ref(true);
-const question = ref("");
+export default defineComponent({
+  name: "Home",
+  setup() {
+    const tasks = ref([]);
+    const store = useStore();
+    tasks.value = store.state.tasks;
+    const setTaskComplete = (task: Task): void => {
+      store.commit(MutationType.CompleteTask, task);
+    };
+    const deleteTask = (task: Task) => {
+      store.commit(MutationType.DeleteTask, task);
+    };
 
-const state = reactive({
-  newComment: "",
-  comments: ["Taco comment 1!", "Taco comment 2!", "Taco comment 3!"],
+    return {
+      tasks,
+      setTaskComplete,
+      deleteTask,
+    };
+  },
 });
-
-function addTacoClick() {
-  console.log("clicked");
-  state.comments.push(state.newComment);
-  state.newComment = "";
-}
 </script>
-
-<template>
-  <div>
-    <h2>Taco comments</h2>
-  </div>
-
-  <input v-model="state.newComment" />
-  <button @click="addTacoClick">Add comment</button>
-  <li v-for="item in state.comments" v-text="item" :key="item"></li>
-</template>
